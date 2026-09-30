@@ -1,0 +1,328 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background-color: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="number"],
+    select,
+    input[type="text"] {
+      padding: 10px;
+      font-size: 18px;
+      text-align: center;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    input[type="number"],
+    select {
+      width: 100px;
+    }
+
+    input[type="text"] {
+      width: 130px;
+    }
+
+    input[type="number"]:focus,
+    select:focus,
+    input[type="text"]:focus {
+      border-color: #007bff;
+    }
+
+    .btn-igual {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffffff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 16px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-igual:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-igual:focus-visible {
+      outline: 3px solid rgba(0, 123, 255, 0.35);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        gap: 8px;
+        padding: 16px;
+      }
+
+      input[type="number"],
+      select {
+        width: 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container" aria-label="Calculadora">
+
+    <input
+      type="number"
+      id="valor1"
+      value="5"
+      aria-label="Primeiro valor ou Início"
+    >
+
+    <select id="operacao" aria-label="Operação">
+      <option value="+">+</option>
+      <option value="-">−</option>
+      <option value="*">×</option>
+      <option value="/">÷</option>
+      <option value="%">%</option>
+      <option value="**">Potência</option>
+      <option value="fatorial">Fatorial !</option>
+      <option value="combinacao">Combinação C</option>
+      <option value="sigma">Σ</option>
+      <option value="pi">Π</option>
+    </select>
+
+    <input
+      type="number"
+      id="valor2"
+      value="2"
+      aria-label="Segundo valor ou Fim"
+    >
+
+    <button
+      type="button"
+      class="btn-igual"
+      id="calcular"
+    >
+      =
+    </button>
+
+    <input
+      type="text"
+      id="resultado"
+      aria-label="Resultado"
+      readonly
+    >
+
+  </main>
+
+  <script>
+
+    const valor1 = document.getElementById("valor1");
+    const valor2 = document.getElementById("valor2");
+    const operacao = document.getElementById("operacao");
+    const resultado = document.getElementById("resultado");
+
+    // Função para calcular fatorial
+    function calcularFatorial(numero) {
+
+      let resultadoFatorial = 1;
+
+      for (let i = 1; i <= numero; i++) {
+        resultadoFatorial *= i;
+      }
+
+      return resultadoFatorial;
+    }
+
+    function calcularOperacao() {
+
+      const a = Number(valor1.value);
+      const b = Number(valor2.value);
+      const op = operacao.value;
+
+      if (
+        valor1.value === "" ||
+        valor2.value === "" ||
+        Number.isNaN(a) ||
+        Number.isNaN(b)
+      ) {
+        resultado.value = "Digite dois valores";
+        return;
+      }
+
+      switch (op) {
+
+        // SOMA
+        case "+":
+          resultado.value = a + b;
+          break;
+
+        // SUBTRAÇÃO
+        case "-":
+          resultado.value = a - b;
+          break;
+
+        // MULTIPLICAÇÃO
+        case "*":
+          resultado.value = a * b;
+          break;
+
+        // DIVISÃO
+        case "/":
+
+          if (b === 0) {
+            resultado.value = "Erro por 0";
+            return;
+          }
+
+          resultado.value = a / b;
+          break;
+
+        // RESTO DA DIVISÃO
+        case "%":
+
+          if (b === 0) {
+            resultado.value = "Erro por 0";
+            return;
+          }
+
+          resultado.value = a % b;
+          break;
+
+        // POTÊNCIA
+        case "**":
+
+          resultado.value = a ** b;
+          break;
+
+        // FATORIAL
+        case "fatorial":
+
+          if (a < 0 || !Number.isInteger(a)) {
+            resultado.value = "Use inteiro >= 0";
+            return;
+          }
+
+          resultado.value = calcularFatorial(a);
+          break;
+
+        // COMBINAÇÃO
+        // C(n, k) = n! / (k! * (n-k)!)
+        case "combinacao":
+
+          if (
+            a < 0 ||
+            b < 0 ||
+            !Number.isInteger(a) ||
+            !Number.isInteger(b)
+          ) {
+            resultado.value = "Use inteiros >= 0";
+            return;
+          }
+
+          if (b > a) {
+            resultado.value = "k > n";
+            return;
+          }
+
+          const combinacao =
+            calcularFatorial(a) /
+            (
+              calcularFatorial(b) *
+              calcularFatorial(a - b)
+            );
+
+          resultado.value = combinacao;
+          break;
+
+        // SIGMA (Σ)
+        // Soma todos os números do início até o fim
+        case "sigma":
+
+          if (a > b) {
+            resultado.value = "Início > Fim";
+            return;
+          }
+
+          let soma = 0;
+
+          for (let i = a; i <= b; i++) {
+            soma += i;
+          }
+
+          resultado.value = soma;
+          break;
+
+        // PI (Π)
+        // Multiplica todos os números do início até o fim
+        case "pi":
+
+          if (a > b) {
+            resultado.value = "Início > Fim";
+            return;
+          }
+
+          let produto = 1;
+
+          for (let i = a; i <= b; i++) {
+            produto *= i;
+          }
+
+          resultado.value = produto;
+          break;
+
+        // OPERAÇÃO INVÁLIDA
+        default:
+          resultado.value = "Operação inválida";
+      }
+    }
+
+    // Botão =
+    document
+      .getElementById("calcular")
+      .addEventListener("click", calcularOperacao);
+
+    // Permite apertar Enter para calcular
+    [valor1, valor2].forEach(campo => {
+
+      campo.addEventListener("keydown", e => {
+
+        if (e.key === "Enter") {
+          calcularOperacao();
+        }
+
+      });
+
+    });
+
+  </script>
+
+</body>
+</html>
+```
